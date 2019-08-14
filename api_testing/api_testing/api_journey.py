@@ -2,10 +2,11 @@ import requests
 import json
 from api_testing.core import Core
 
+
 class Api_Journey():
     def __init__(self):
         pass
-    
+
     def orders(self, endpoint=None, payloads=None):
         return requests.post(endpoint, json=payloads)
 

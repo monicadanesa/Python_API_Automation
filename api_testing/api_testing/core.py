@@ -10,7 +10,7 @@ class Core:
     def calculate_distance(self, stops):
         if len(stops) == 2:
             distance = 1
-        elif len(stops) >=2:
+        elif len(stops) >= 2:
             distance = len(stops) - 1
 
         return distance
