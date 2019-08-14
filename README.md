@@ -1,4 +1,4 @@
-# Python_API_Automation_Test
+# Python API Automation Test
 API Automation Testing using python, pytest and allure.
 
 Introduction
