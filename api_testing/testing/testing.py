@@ -183,11 +183,16 @@ def test_take_order_endpoint_logic_violated():
     - checking response code should be 422
     - checking response message
     """
-    id = 1
+    set_time = maya.now().add(minutes=1).iso8601()
+    date = Core().get_date(input_full_date=set_time)
+    id = __get_order(time=set_time).json()['id']
+
     get_endpoint = Data().generate_endpoint('/v1/orders/{:d}/take'.format(id))
     get_response = Api_Journey().take_complete_cancel_endpoint(endpoint=get_endpoint)
-    assert_that(get_response.status_code).is_equal_to(422)
-    assert_that(get_response.json()['message']).is_equal_to('Order status is not ASSIGNING')
+
+    violated_response = Api_Journey().take_complete_cancel_endpoint(endpoint=get_endpoint)
+    assert_that(violated_response.status_code).is_equal_to(422)
+    assert_that(violated_response.json()['message']).is_equal_to('Order status is not ASSIGNING')
 
 def test_complete_the_order_endpoint():
     """test complete the order endpoint
@@ -234,7 +239,7 @@ def test_complete_the_order_endpoint_logic_violated():
     - checking response code should be 422
     - checking response message
     """
-    id = 1
+    id = __get_order().json()['id']
     get_endpoint = Data().generate_endpoint('/v1/orders/{:d}/complete'.format(id))
     get_response = Api_Journey().take_complete_cancel_endpoint(endpoint=get_endpoint)
     assert_that(get_response.status_code).is_equal_to(422)
@@ -285,8 +290,15 @@ def test_cancelled_the_order_endpoint_logic_violated():
     - checking response code should be 422
     - checking response message
     """
-    id = 1
+    id = __get_order().json()['id']
+    fetch_endpoint = Data().generate_endpoint('/v1/orders/{:d}'.format(id))
+    fetch_response = Api_Journey().fetch_data_endpoint(endpoint=fetch_endpoint)
+    take_endpoint = Data().generate_endpoint('/v1/orders/{:d}/take'.format(id))
+    take_response = Api_Journey().take_complete_cancel_endpoint(endpoint=take_endpoint)
+    complete_endpoint = Data().generate_endpoint('/v1/orders/{:d}/complete'.format(id))
+    complete_response = Api_Journey().take_complete_cancel_endpoint(endpoint=complete_endpoint)
     get_endpoint = Data().generate_endpoint('/v1/orders/{:d}/cancel'.format(id))
     get_response = Api_Journey().take_complete_cancel_endpoint(endpoint=get_endpoint)
+
     assert_that(get_response.status_code).is_equal_to(422)
     assert_that(get_response.json()['message']).is_equal_to('Order status is COMPLETED already')
